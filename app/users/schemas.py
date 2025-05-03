@@ -1,25 +1,29 @@
-from datetime import date, datetime
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
-
-class SUserRegister(BaseModel):
-    email: EmailStr
-    password: str
+class SUserBase(BaseModel):
     username: str
+    email: EmailStr
 
-
-    model_config = ConfigDict(from_attributes=True)
-
+class SUserRegister(SUserBase):
+    password: str
 
 class SUserLogin(BaseModel):
     email: EmailStr
     password: str
 
-    model_config = ConfigDict(from_attributes=True)
+class SUserUpdate(BaseModel):
+    username: str | None = None
+    email: EmailStr | None = None
 
-    
-class SUser(BaseModel):
-    username: str
+class SUser(SUserBase):
+    id: int
+    role_id: int
+    reputation: int
     created_at: datetime
+    last_login: datetime | None
+    is_visible: bool
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = {
+        "from_attributes": True
+    }

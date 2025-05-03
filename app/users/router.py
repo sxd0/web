@@ -4,7 +4,7 @@ from app.users.auth import authenticate_user, create_access_token, create_refres
 from app.users.dao import UsersDAO
 from app.users.dependencies import get_current_user, get_refresh_token
 from app.users.models import User
-from app.users.schemas import SUser, SUserLogin, SUserRegister
+from app.users.schemas import SUser, SUserLogin, SUserRegister, SUserUpdate
 from app.config import settings
 
 
@@ -89,3 +89,35 @@ async def logout_user(response: Response):
 async def read_users_me(current_user: User = Depends(get_current_user)) -> SUser:
     """Вывод информации о себе"""
     return current_user
+
+
+@router.get("/", response_model=list[SUser])
+async def get_all_users(user: User = Depends(get_current_user)):
+    if user.role_id != 2:
+        raise HTTPException(status_code=403, detail="Admins only")
+    return await UsersDAO().find_all()
+
+
+
+@router.get("/{user_id}", response_model=SUser)
+async def get_user_by_id(user_id: int, current: User = Depends(get_current_user)):
+    if current.role_id != 2 and current.id != user_id:
+        raise HTTPException(status_code=403, detail="Not permitted")
+    user = await UsersDAO().find_one_or_none(id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@router.put("/{user_id}", response_model=dict)
+async def update_user(user_id: int, payload: SUserUpdate, current: User = Depends(get_current_user)):
+    if current.id != user_id:
+        raise HTTPException(status_code=403, detail="Cannot update others")
+    await UsersDAO().update(user_id=user_id, data=payload.dict(exclude_none=True))
+    return {"status": "updated"}
+
+@router.delete("/{user_id}", response_model=dict)
+async def delete_user(user_id: int, current: User = Depends(get_current_user)):
+    if current.id != user_id and current.role_id != 2:
+        raise HTTPException(status_code=403, detail="Cannot delete others")
+    await UsersDAO().delete(user_id)
+    return {"status": "deleted"}
