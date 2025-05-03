@@ -30,7 +30,7 @@ def create_refresh_token(data: dict) -> str:
     return encoded_jwt
 
 async def authenticate_user(email: EmailStr, password: str):
-    user = await UsersDAO.find_one_or_none(email=email)
+    user = await UsersDAO().find_one_or_none(email=email)
     if not user or not verify_password(password, user.hashed_password):
         return None
     return user

@@ -5,6 +5,8 @@ docker-compose exec app alembic upgrade head
 
 docker-compose exec db psql -U postgres -d que_db
 
+docker cp seed.sql db:/seed.sql
+docker-compose exec db psql -U postgres -d que_db -f /seed.sql
 
 ### 1. **Таблица `Posts`**
 - **Описание**: Хранит информацию о всех постах (вопросы, ответы, комментарии).

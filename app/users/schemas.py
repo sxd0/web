@@ -19,8 +19,7 @@ class SUserLogin(BaseModel):
 
     
 class SUser(BaseModel):
-    name: str
-    surname: str
+    username: str
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
