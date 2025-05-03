@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: que_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - .:/app
+    container_name: db
+
+  app:
+    build: .
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    container_name: app
+
+volumes:
+  postgres_data:
