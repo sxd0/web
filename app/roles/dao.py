@@ -1,6 +1,6 @@
 from app.dao.base import BaseDAO
 from app.roles.models import Role
 
-class UsersDAO(BaseDAO):
+class RolesDAO(BaseDAO):
     def __init__(self):
         super().__init__(Role)

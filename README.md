@@ -1,15 +1,5 @@
 # QUE
 
-posts
-QuestionTags
-tags
-users
-roles
-votes
-notifications
-bookmarks
-subscriptions
-
 docker-compose exec app alembic revision --autogenerate -m "init"
 docker-compose exec app alembic upgrade head
 

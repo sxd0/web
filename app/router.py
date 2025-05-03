@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.bookmarks.router import router as bookmarks_router
 from app.notifications.router import router as notifications_router
 from app.posts.router import router as posts_router
-from app.questionTags.router import router as question_tags_router
+from app.question_tags.router import router as question_tags_router
 from app.roles.router import router as roles_router
 from app.subscriptions.router import router as subscriptions_router
 from app.tags.router import router as tags_router

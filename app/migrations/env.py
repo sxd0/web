@@ -14,7 +14,7 @@ from app.database import Base
 from app.bookmarks.models import Bookmark
 from app.notifications.models import Notification
 from app.posts.models import Post
-from app.questionTags.models import QuestionTag
+from app.question_tags.models import QuestionTag
 from app.roles.models import Role
 from app.subscriptions.models import Subscription
 from app.tags.models import Tag

@@ -1,8 +1,8 @@
 """initial migrations
 
-Revision ID: db2a0aa73f9b
+Revision ID: bef8eb7bbf0e
 Revises: 
-Create Date: 2025-05-03 14:37:03.013178
+Create Date: 2025-05-03 15:35:02.480616
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'db2a0aa73f9b'
+revision: str = 'bef8eb7bbf0e'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -40,8 +40,8 @@ def upgrade() -> None:
     sa.Column('hashed_password', sa.String(), nullable=False),
     sa.Column('role_id', sa.Integer(), nullable=False),
     sa.Column('reputation', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('last_login', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('last_login', sa.DateTime(timezone=True), nullable=True),
     sa.Column('is_visible', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
     sa.PrimaryKeyConstraint('id'),

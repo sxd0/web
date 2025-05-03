@@ -4,7 +4,7 @@ from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, Request, status
 from app.config import settings
 from app.users.dao import UsersDAO
-from app.users.models import Users
+from app.users.models import User
 
 def get_token(request: Request):
     token = request.cookies.get("access_token")
