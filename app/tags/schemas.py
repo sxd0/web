@@ -1,13 +1,16 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class TagsBase(BaseModel):
-    user_id: int
+class TagBase(BaseModel):
+    name: str
 
-class TagsCreate(TagsBase):
+class TagCreate(TagBase):
     pass
 
-class TagsRead(TagsBase):
+class TagUpdate(BaseModel):
+    name: str | None = None
+
+class TagRead(TagBase):
     id: int
     created_at: datetime
 

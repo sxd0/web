@@ -1,13 +1,13 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class RolesBase(BaseModel):
-    user_id: int
+class RoleBase(BaseModel):
+    name: str
 
-class RolesCreate(RolesBase):
+class RoleCreate(RoleBase):
     pass
 
-class RolesRead(RolesBase):
+class RoleRead(RoleBase):
     id: int
     created_at: datetime
 

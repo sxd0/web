@@ -1,14 +1,16 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class NotificationsBase(BaseModel):
-    user_id: int
+class NotificationBase(BaseModel):
+    type: str
+    message: str
 
-class NotificationsCreate(NotificationsBase):
+class NotificationCreate(NotificationBase):
     pass
 
-class NotificationsRead(NotificationsBase):
+class NotificationRead(NotificationBase):
     id: int
+    user_id: int
     created_at: datetime
 
     model_config = {

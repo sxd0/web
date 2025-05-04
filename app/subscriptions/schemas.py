@@ -1,14 +1,15 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class SubscriptionsBase(BaseModel):
-    user_id: int
+class SubscriptionBase(BaseModel):
+    target_user_id: int
 
-class SubscriptionsCreate(SubscriptionsBase):
+class SubscriptionCreate(SubscriptionBase):
     pass
 
-class SubscriptionsRead(SubscriptionsBase):
+class SubscriptionRead(SubscriptionBase):
     id: int
+    user_id: int
     created_at: datetime
 
     model_config = {

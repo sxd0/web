@@ -1,14 +1,15 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class BookmarksBase(BaseModel):
-    user_id: int
+class BookmarkBase(BaseModel):
+    post_id: int
 
-class BookmarksCreate(BookmarksBase):
+class BookmarkCreate(BookmarkBase):
     pass
 
-class BookmarksRead(BookmarksBase):
+class BookmarkRead(BookmarkBase):
     id: int
+    user_id: int
     created_at: datetime
 
     model_config = {

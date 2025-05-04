@@ -1,14 +1,16 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class VotesBase(BaseModel):
-    user_id: int
+class VoteBase(BaseModel):
+    post_id: int
+    value: int  # +1 или -1
 
-class VotesCreate(VotesBase):
+class VoteCreate(VoteBase):
     pass
 
-class VotesRead(VotesBase):
+class VoteRead(VoteBase):
     id: int
+    user_id: int
     created_at: datetime
 
     model_config = {
