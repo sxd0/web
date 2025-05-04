@@ -5,14 +5,14 @@ class NotificationBase(BaseModel):
     type: str
     message: str
 
-class NotificationCreate(NotificationBase):
-    pass
+class NotificationCreate(BaseModel):
+    type: str  # ENUM: NewAnswer / NewQuestion
+    message: str
 
-class NotificationRead(NotificationBase):
+class NotificationRead(BaseModel):
     id: int
     user_id: int
-    created_at: datetime
+    type: str
+    message: str
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

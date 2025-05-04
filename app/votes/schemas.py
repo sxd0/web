@@ -5,14 +5,14 @@ class VoteBase(BaseModel):
     post_id: int
     value: int  # +1 или -1
 
-class VoteCreate(VoteBase):
-    pass
+class VoteCreate(BaseModel):
+    post_id: int
+    vote_type: str  # ENUM: up/down
 
-class VoteRead(VoteBase):
+class VoteRead(BaseModel):
     id: int
     user_id: int
-    created_at: datetime
+    post_id: int
+    vote_type: str
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

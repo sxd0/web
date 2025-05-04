@@ -56,12 +56,12 @@ async def get_detailed_posts():
     result = []
 
     for post in posts:
-        tag_links = await QuestionTagsDAO().find_all(post_id=post.id)
+        tag_links = await QuestionTagsDAO().find_all(question_id=post.id)
         votes = await VotesDAO().find_all(post_id=post.id)
         result.append(PostReadDetailed(
             **post.__dict__,
             tags=[t.tag_id for t in tag_links],
-            votes=sum(v.value for v in votes)
+            votes=len(votes)
         ))
 
     return result

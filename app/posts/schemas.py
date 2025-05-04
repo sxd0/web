@@ -22,13 +22,19 @@ class PostRead(PostBase):
 class PostReadWithTags(PostRead):
     tags: list[int]
 
-class PostReadDetailed(PostBase):
+class PostReadDetailed(BaseModel):
     id: int
-    user_id: int
+    title: str
+    body: str
+    author_id: int
+    post_type: str
+    is_closed: bool
+    is_visible: bool
+    is_accepted: bool
     created_at: datetime
     tags: list[int] = []
     votes: int = 0
-    
+
     model_config = {
         "from_attributes": True
     }

@@ -59,7 +59,7 @@ async def refresh_token(response: Response, refresh_token: str = Depends(get_ref
     if not user_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid refresh token")
-    user = await UsersDAO.find_one_or_none(id=int(user_id))
+    user = await UsersDAO().find_one_or_none(id=int(user_id))
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")

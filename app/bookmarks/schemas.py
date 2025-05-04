@@ -4,14 +4,14 @@ from datetime import datetime
 class BookmarkBase(BaseModel):
     post_id: int
 
-class BookmarkCreate(BookmarkBase):
-    pass
+class BookmarkCreate(BaseModel):
+    post_id: int
+    is_active: bool = True
 
-class BookmarkRead(BookmarkBase):
+class BookmarkRead(BaseModel):
     id: int
     user_id: int
-    created_at: datetime
+    post_id: int
+    is_active: bool
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

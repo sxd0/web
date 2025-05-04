@@ -5,13 +5,11 @@ class QuestionTagBase(BaseModel):
     post_id: int
     tag_id: int
 
-class QuestionTagCreate(QuestionTagBase):
-    pass
+class QuestionTagCreate(BaseModel):
+    post_id: int
+    tag_id: int
 
-class QuestionTagRead(QuestionTagBase):
+class QuestionTagRead(QuestionTagCreate):
     id: int
-    created_at: datetime
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

@@ -4,16 +4,16 @@ from datetime import datetime
 class TagBase(BaseModel):
     name: str
 
-class TagCreate(TagBase):
-    pass
-
 class TagUpdate(BaseModel):
     name: str | None = None
 
-class TagRead(TagBase):
+class TagRead(BaseModel):
     id: int
-    created_at: datetime
+    name: str
+    description: str
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
+
+class TagCreate(BaseModel):
+    name: str
+    description: str

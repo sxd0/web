@@ -5,8 +5,8 @@ class SUserBase(BaseModel):
     username: str
     email: EmailStr
 
-class SUserRegister(SUserBase):
-    password: str
+# class SUserRegister(SUserBase):
+#     password: str
 
 class SUserLogin(BaseModel):
     email: EmailStr
@@ -16,14 +16,19 @@ class SUserUpdate(BaseModel):
     username: str | None = None
     email: EmailStr | None = None
 
-class SUser(SUserBase):
+class SUser(BaseModel):
     id: int
+    username: str
+    email: str
     role_id: int
     reputation: int
-    created_at: datetime
-    last_login: datetime | None
     is_visible: bool
 
     model_config = {
         "from_attributes": True
     }
+
+class SUserRegister(BaseModel):
+    username: str
+    email: str
+    password: str

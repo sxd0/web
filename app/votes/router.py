@@ -15,7 +15,7 @@ async def create_vote(payload: VoteCreate, user: User = Depends(get_current_user
     existing = await VotesDAO().find_one_or_none(user_id=user.id, post_id=payload.post_id)
     if existing:
         raise HTTPException(status_code=400, detail="Already voted")
-    return await VotesDAO().add(user_id=user.id, **payload.dict())
+    return await VotesDAO().add(user_id=user.id, post_id=payload.post_id, vote_type=payload.vote_type)
 
 @router.delete("/{vote_id}", response_model=dict)
 async def delete_vote(vote_id: int, user: User = Depends(get_current_user)):
