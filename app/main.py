@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 # from app.auth.router import router as router_auth
 from fastapi.staticfiles import StaticFiles
 from app.router import router as global_router
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from starlette.requests import Request
 
 
 app = FastAPI()
@@ -15,9 +18,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.mount('/static', StaticFiles(directory='app/static'), name='static')
 
 app.include_router(global_router)
+
+# templates = Jinja2Templates(directory="app/admin/templates")
+app.mount("/static", StaticFiles(directory="app/admin/static"), name="static")
 
 
 @app.get("/")
@@ -26,5 +31,3 @@ def home_page():
         "message": "200"
     }
 
-
-# app.include_router(router_auth)
