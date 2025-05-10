@@ -22,4 +22,4 @@ class Vote(Base):
     post = relationship('Post')
 
     def __str__(self):
-        return self.name
+        return f"Vote({self.vote_type})"

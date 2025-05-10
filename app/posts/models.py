@@ -1,7 +1,7 @@
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 import enum
-from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String, func
 from app.database import Base
 
 
@@ -15,8 +15,8 @@ class Post(Base):
     title = Column(String)
     body = Column(String, nullable=False)
     author_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     views = Column(Integer, default=0)
     is_closed = Column(Boolean, default=False)
     is_visible = Column(Boolean, default=True)

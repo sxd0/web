@@ -12,7 +12,12 @@ async def get_subscriptions(user: User = Depends(get_current_user)):
 
 @router.post("/", response_model=SubscriptionRead)
 async def create_subscription(payload: SubscriptionCreate, user: User = Depends(get_current_user)):
+    if payload.type == "user" and not payload.targetuser_id:
+        raise HTTPException(status_code=400, detail="targetuser_id is required for 'user' subscriptions")
+    if payload.type == "post" and not payload.targetpost_id:
+        raise HTTPException(status_code=400, detail="targetpost_id is required for 'post' subscriptions")
     return await SubscriptionsDAO().add(user_id=user.id, **payload.dict())
+
 
 @router.delete("/{subscription_id}", response_model=dict)
 async def delete_subscription(subscription_id: int, user: User = Depends(get_current_user)):

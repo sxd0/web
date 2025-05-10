@@ -19,5 +19,6 @@ class Notification(Base):
     relatedpost_id = Column(Integer, ForeignKey('posts.id'))
     relateduser_id = Column(Integer, ForeignKey('users.id'))
     message = Column(Text)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
 

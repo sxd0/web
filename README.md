@@ -1,6 +1,8 @@
 # QUE
-
+Новые миграции(не нужны)
 docker-compose exec app alembic revision --autogenerate -m "init"
+
+
 docker-compose exec app alembic upgrade head
 
 docker-compose exec db psql -U postgres -d que_db
@@ -10,7 +12,7 @@ docker-compose exec db psql -U postgres -d que_db -f /seed.sql
 
 UPDATE users
 SET role_id = 2
-WHERE id = 3;
+WHERE id = 4;
 
 ### 1. **Таблица `Posts`**
 - **Описание**: Хранит информацию о всех постах (вопросы, ответы, комментарии).

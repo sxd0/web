@@ -19,7 +19,7 @@ async def update_tag(tag_id: int, payload: TagUpdate, user: User = Depends(get_c
     tag = await TagsDAO().find_one_or_none(id=tag_id)
     if not tag:
         raise HTTPException(status_code=404, detail="Tag not found")
-    await TagsDAO().update(tag_id, payload.dict(exclude_none=True))
+    await TagsDAO().update(filter_by={"id": tag_id}, **payload.dict(exclude_unset=True))
     return {"status": "updated"}
 
 @router.delete("/{tag_id}", response_model=dict)
@@ -27,5 +27,5 @@ async def delete_tag(tag_id: int, user: User = Depends(get_current_user)):
     tag = await TagsDAO().find_one_or_none(id=tag_id)
     if not tag:
         raise HTTPException(status_code=404, detail="Tag not found")
-    await TagsDAO().delete(tag_id)
+    await TagsDAO().delete(id=tag_id)
     return {"status": "deleted"}

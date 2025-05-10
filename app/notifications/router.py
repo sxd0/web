@@ -23,3 +23,8 @@ async def delete_notification(notification_id: int, user: User = Depends(get_cur
         raise HTTPException(status_code=403, detail="Not allowed")
     await NotificationsDAO().delete_by_id(notification_id)
     return {"status": "deleted"}
+
+
+@router.get("/my", response_model=list[NotificationRead])
+async def get_my_notifications(user: User = Depends(get_current_user)):
+    return await NotificationsDAO().find_all(user_id=user.id)

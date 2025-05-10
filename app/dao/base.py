@@ -1,3 +1,4 @@
+from typing import Any
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 from app.database import async_session_maker
@@ -74,4 +75,30 @@ class BaseDAO:
                 return result.scalars().all()
             except SQLAlchemyError as e:
                 logger.error(f"Error in find_all_for_list: {e}")
+                raise
+
+    async def update_by_id(self, obj_id: int, data: dict) -> Any:
+        async with async_session_maker() as session:
+            try:
+                query = (
+                    update(self.model)
+                    .where(self.model.id == obj_id)
+                    .values(**data)
+                    .returning(self.model)
+                )
+                result = await session.execute(query)
+                await session.commit()
+                return result.scalar_one_or_none()
+            except SQLAlchemyError as e:
+                logger.error(f"Error in update_by_id: {e}")
+                raise
+
+    async def delete_by_id(self, obj_id: int) -> None:
+        async with async_session_maker() as session:
+            try:
+                query = delete(self.model).where(self.model.id == obj_id)
+                await session.execute(query)
+                await session.commit()
+            except SQLAlchemyError as e:
+                logger.error(f"Error in delete_by_id: {e}")
                 raise

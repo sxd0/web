@@ -13,4 +13,4 @@ class QuestionTag(Base):
     tag = relationship('Tag')
 
     def __str__(self):
-        return self.name
+        return f"Tag #{self.tag_id} for Question #{self.question_id}"

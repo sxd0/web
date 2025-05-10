@@ -13,5 +13,6 @@ class BookmarkRead(BaseModel):
     user_id: int
     post_id: int
     is_active: bool
+    created_at: datetime
 
     model_config = {"from_attributes": True}

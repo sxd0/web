@@ -19,7 +19,7 @@ class Subscription(Base):
     type = Column(Enum(SubscriptionType), nullable=False)
     targetuser_id = Column(Integer, ForeignKey('users.id'))
     targetpost_id = Column(Integer, ForeignKey('posts.id'))
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     is_active = Column(Boolean, default=True)
     
     user = relationship("User", back_populates="subscriptions", foreign_keys=[user_id])

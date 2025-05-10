@@ -1,5 +1,6 @@
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from app.posts.dao import PostsDAO
 from app.users.auth import authenticate_user, create_access_token, create_refresh_token, get_password_hash
 from app.users.dao import UsersDAO
 from app.users.dependencies import get_current_user, get_refresh_token
@@ -112,12 +113,22 @@ async def get_user_by_id(user_id: int, current: User = Depends(get_current_user)
 async def update_user(user_id: int, payload: SUserUpdate, current: User = Depends(get_current_user)):
     if current.id != user_id:
         raise HTTPException(status_code=403, detail="Cannot update others")
-    await UsersDAO().update(user_id=user_id, data=payload.dict(exclude_none=True))
+
+    data = payload.dict(exclude_none=True)
+    data.pop("password", None)
+
+    await UsersDAO().update(filter_by={"id": user_id}, **data)
     return {"status": "updated"}
+
 
 @router.delete("/{user_id}", response_model=dict)
 async def delete_user(user_id: int, current: User = Depends(get_current_user)):
     if current.id != user_id and current.role_id != 2:
         raise HTTPException(status_code=403, detail="Cannot delete others")
-    await UsersDAO().delete(user_id)
+
+    posts = await PostsDAO().find_all(author_id=user_id)
+    if posts:
+        raise HTTPException(status_code=400, detail="User has posts and cannot be deleted")
+
+    await UsersDAO().delete(id=user_id)
     return {"status": "deleted"}
