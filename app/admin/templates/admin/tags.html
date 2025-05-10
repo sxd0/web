@@ -1,0 +1,23 @@
+{% extends "admin/layout.html" %}
+{% block title %}Теги{% endblock %}
+{% block content %}
+<h2>Теги</h2>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Название</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for tag in tags %}
+    <tr>
+      <td>{{ tag.id }}</td>
+      <td>{{ tag.name }}</td>
+      <td>{{ tag.description }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -28,5 +28,13 @@ class Post(Base):
     author = relationship('User')
     parent = relationship('Post', remote_side=[id])
 
+    tags = relationship(
+        "Tag",
+        secondary="question_tags",
+        primaryjoin="Post.id==QuestionTag.question_id",
+        secondaryjoin="Tag.id==QuestionTag.tag_id",
+        viewonly=True,
+        lazy="selectin"
+    )
     def __str__(self):
         return self.name

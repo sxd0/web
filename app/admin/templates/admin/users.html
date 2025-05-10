@@ -1,0 +1,43 @@
+{% extends "admin/layout.html" %}
+{% block title %}Пользователи{% endblock %}
+{% block content %}
+<h2>Пользователи</h2>
+
+<form method="get" class="mb-3">
+  <select name="role_id" class="form-select" onchange="this.form.submit()">
+    <option value="0">Все роли</option>
+    {% for user in users %}
+      {% if user.role %}
+        <option value="{{ user.role.id }}"
+                {% if role_id == user.role.id %}selected{% endif %}>
+          {{ user.role.name }}
+        </option>
+      {% endif %}
+    {% endfor %}
+  </select>
+</form>
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Имя</th>
+      <th>Email</th>
+      <th>Дата регистрации</th>
+      <th>Роль</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td><a href="/admin/users/{{ user.id }}/edit">{{ user.username }}</a></td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+      <td>{{ user.role.name if user.role else '—' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "admin/layout.html" %}
+{% block title %}Голоса{% endblock %}
+{% block content %}
+<h2>Голоса</h2>
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Пользователь</th>
+      <th>Пост</th>
+      <th>Тип</th>
+      <th>Дата</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for vote in votes %}
+    <tr>
+      <td>{{ vote.id }}</td>
+      <td>
+        {% if vote.user %}
+        <a href="/admin/users/{{ vote.user.id }}/edit">{{ vote.user.username }}</a>
+        {% else %} — {% endif %}
+      </td>
+      <td>
+        {% if vote.post %}
+        <a href="/admin/posts/{{ vote.post.id }}/edit">{{ vote.post.title }}</a>
+        {% else %} — {% endif %}
+      </td>
+      <td>{{ vote.vote_type }}</td>
+      <td>{{ vote.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "admin/layout.html" %}
+{% block title %}Редактирование пользователя{% endblock %}
+{% block content %}
+<h2>Редактировать пользователя</h2>
+<form method="post">
+  <div class="mb-2">
+    <label>ID:</label>
+    <input type="text" class="form-control" value="{{ user.id }}" readonly>
+  </div>
+  <div class="mb-2">
+    <label>Имя:</label>
+    <input type="text" class="form-control" value="{{ user.username }}" readonly>
+  </div>
+  <div class="mb-2">
+    <label>Email:</label>
+    <input type="email" name="email" class="form-control" value="{{ user.email }}">
+  </div>
+  <div class="mb-2">
+    <label>Роль:</label>
+    <select name="role_id" class="form-select">
+      {% for role in roles %}
+      <option value="{{ role.id }}" {% if user.role_id == role.id %}selected{% endif %}>
+        {{ role.name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="btn btn-primary">Сохранить</button>
+  <h4 class="mt-4">Подписки</h4>
+  <table class="table table-sm table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>На кого подписан</th>
+        <th>Когда</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sub in subscriptions %}
+      <tr>
+        <td>{{ sub.id }}</td>
+        <td>{{ sub.target_user.username if sub.target_user else '—' }}</td>
+        <td>{{ sub.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</form>
+{% endblock %}

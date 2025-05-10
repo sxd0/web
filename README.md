@@ -11,7 +11,7 @@ docker-compose cp seed.sql db:/seed.sql
 docker-compose exec db psql -U postgres -d que_db -f /seed.sql
 
 UPDATE users
-SET role_id = 2
+SET role_id = 1
 WHERE id = 4;
 
 ### 1. **Таблица `Posts`**
@@ -181,4 +181,44 @@ WHERE id = 4;
 
 4. **Временные метки**:
    - `created_at` и `updated_at` помогают отслеживать динамику изменений в данных.
+
+
+## Общая структура
+- Все страницы админки доступны по маршруту: /admin
+- Используется шаблонизатор Jinja2 и Bootstrap 5
+- Навигация реализована через главную страницу /admin (templates/admin/index.html)
+- Доступ без авторизации возможен (можно ограничить по role_id = 2 при необходимости)
+
+## Покрытие моделей и функциональности
+| Модель            | Реализованные аналоги Django Admin                                                                               | Где реализовано                          |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Posts**         | `list_display`, `search_fields`, `list_filter`, `readonly_fields`, `filter_horizontal (tags)`, `inlines (votes)` | `/admin/posts`, `/admin/posts/{id}/edit` |
+| **Users**         | `list_display`, `list_filter (по ролям)`, `list_display_links`, `readonly_fields`, `inlines (subscriptions)`     | `/admin/users`, `/admin/users/{id}/edit` |
+| **Roles**         | `list_display`, `@admin.display` (кол-во пользователей), `readonly_fields`                                       | `/admin/roles`, `/admin/roles/{id}/edit` |
+| **Tags**          | `list_display`, `readonly` просмотр                                                                              | `/admin/tags`                            |
+| **Bookmarks**     | `list_display`, `list_filter (по пользователю)`, `readonly`, `ссылки на связанные объекты`                       | `/admin/bookmarks`                       |
+| **Votes**         | `list_display`, `readonly_fields`, `ссылки на пост/юзера`, `vote_type`                                           | `/admin/votes`                           |
+| **Subscriptions** | `inline (readonly)` внутри `User`                                                                                | `/admin/users/{id}/edit`                 |
+| **QuestionTags**  | many-to-many связь `Post ↔ Tag`, реализована через `filter_horizontal` и `relationship(viewonly)`                | `admin/posts_edit`, `models.py`          |
+
+## Реализация функциональности (по свойствам Django Admin)
+| Свойство Django Admin     | Как реализовано в FastAPI                                    |
+| ------------------------- | ------------------------------------------------------------ |
+| `list_display`            | HTML-таблицы во всех моделях                                 |
+| `search_fields`           | Поиск в постах по `title` и `body` (`q`)                     |
+| `list_filter`             | Фильтрация по `is_closed`, `post_type`, `role_id`, `user_id` |
+| `readonly_fields`         | `id`, `created_at`, `views`, `username` — только для чтения  |
+| `filter_horizontal`       | `<select multiple>` для `tags` в `Post`                      |
+| `inlines`                 | `Votes` внутри `Post`, `Subscriptions` в `User`              |
+| `@admin.display`          | Подсчёт пользователей на роль (`Roles`)                      |
+| `list_display_links`      | `username`, `title` — кликабельны                            |
+| `raw_id_fields`           | ID отображаются как числа в связях                           |
+| `date_hierarchy` (аналог) | `created_from` / `created_to` через `<input type="date">`    |
+
+## Технические детали
+- Все запросы к данным выполняются через асинхронный SQLAlchemy (async_session_maker)
+- Отношения many-to-many реализованы через явную модель QuestionTag, использующую relationship(..., secondary=...)
+- Отображение тегов в постах реализовано как viewonly=True связь
+- Все шаблоны хранятся в app/admin/templates/admin/
+- Все DAO-функции изолированы в admin/*.py, без дублирования логики из API
 

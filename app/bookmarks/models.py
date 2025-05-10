@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer
 from app.database import Base
+from sqlalchemy.orm import relationship
 
 
 class Bookmark(Base):
@@ -10,3 +11,6 @@ class Bookmark(Base):
     post_id = Column(Integer, ForeignKey('posts.id'))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     is_active = Column(Boolean, default=True)
+
+    user = relationship("User", backref="bookmarks")
+    post = relationship("Post", backref="bookmarks")
