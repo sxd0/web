@@ -28,3 +28,8 @@ async def remove_vote(payload: VoteCreate, user: User = Depends(get_current_user
 
     await VotesDAO().delete(id=existing.id)
     return {"status": "vote deleted"}
+
+
+@router.get("/votes/my/{post_id}", response_model=VoteRead | None)
+async def get_my_vote(post_id: int, user: User = Depends(get_current_user)):
+    return await VotesDAO().get_user_vote(user.id, post_id)

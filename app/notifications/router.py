@@ -28,3 +28,8 @@ async def delete_notification(notification_id: int, user: User = Depends(get_cur
 @router.get("/my", response_model=list[NotificationRead])
 async def get_my_notifications(user: User = Depends(get_current_user)):
     return await NotificationsDAO().find_all(user_id=user.id)
+
+
+@router.get("/notifications", response_model=list[NotificationRead])
+async def get_notifications(user: User = Depends(get_current_user)):
+    return await NotificationsDAO().get_recent_for_user(user.id)

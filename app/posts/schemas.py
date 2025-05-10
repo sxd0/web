@@ -1,11 +1,13 @@
 from typing import Optional
-from pydantic import BaseModel, model_validator, root_validator
+from pydantic import BaseModel, ConfigDict, model_validator, root_validator
 from datetime import datetime
 
 from app.posts.models import PostType
 
 class PostBase(BaseModel):
     content: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 class PostCreate(BaseModel):
     title: str

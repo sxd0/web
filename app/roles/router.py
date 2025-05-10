@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.roles.dao import RolesDAO
 from app.roles.schemas import RoleCreate, RoleRead, RoleUpdate
-from app.users.dependencies import get_current_user
+from app.users.dependencies import get_current_user, require_role
 from app.users.models import User
 
 router = APIRouter(prefix="/roles", tags=["Роли"])
@@ -19,8 +19,11 @@ async def get_role(role_id: int):
         raise HTTPException(status_code=404, detail="Role not found")
     return role
 
-@router.post("/", response_model=RoleRead)
-async def create_role(role_data: RoleCreate):
+@router.post("/roles", response_model=RoleRead)
+async def create_role(
+    role_data: RoleCreate,
+    user: User = Depends(require_role(2))
+):
     """Создание новой роли."""
     return await RolesDAO().add(**role_data.dict())
 

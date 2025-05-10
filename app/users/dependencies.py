@@ -39,3 +39,13 @@ async def get_current_user(token: str = Depends(get_token)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
     return user
+
+def require_role(role_id: int):
+    async def _require_role(user: User = Depends(get_current_user)) -> User:
+        if user.role_id != role_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient privileges"
+            )
+        return user
+    return _require_role

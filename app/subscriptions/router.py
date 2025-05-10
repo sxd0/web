@@ -28,3 +28,7 @@ async def delete_subscription(subscription_id: int, user: User = Depends(get_cur
         raise HTTPException(status_code=403, detail="Not allowed")
     await SubscriptionsDAO().delete_by_id(subscription_id)
     return {"status": "deleted"}
+
+@router.get("/subscriptions", response_model=list[SubscriptionRead])
+async def list_subscriptions(user: User = Depends(get_current_user)):
+    return await SubscriptionsDAO().get_subscriptions(user.id)

@@ -41,6 +41,7 @@ async def update_post(post_id: int, payload: PostUpdate, user: User = Depends(ge
     await PostsDAO().update(filter_by={"id": post_id}, **payload.dict(exclude_none=True))
     return {"status": "updated"}
 
+
 @router.delete("/{post_id}", response_model=dict)
 async def delete_post(post_id: int, user: User = Depends(get_current_user)):
     post = await PostsDAO().find_one_or_none(id=post_id)
@@ -85,3 +86,8 @@ async def get_my_questions(user: User = Depends(get_current_user)):
 @router.get("/my/answers", response_model=list[PostRead])
 async def get_my_answers(user: User = Depends(get_current_user)):
     return await PostsDAO().find_all(author_id=user.id, post_type=PostType.answer)
+
+
+@router.get("/posts/search", response_model=list[PostRead])
+async def search_posts(query: str):
+    return await PostsDAO().search_by_text(query)

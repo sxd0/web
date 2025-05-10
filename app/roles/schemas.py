@@ -1,9 +1,11 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 class RoleBase(BaseModel):
     name: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 class RoleCreate(BaseModel):
     name: str

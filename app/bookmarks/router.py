@@ -32,3 +32,8 @@ async def remove_bookmark(post_id: int, user: User = Depends(get_current_user)):
 @router.get("/my", response_model=list[BookmarkRead])
 async def get_my_bookmarks(user: User = Depends(get_current_user)):
     return await BookmarksDAO().find_all(user_id=user.id)
+
+
+@router.get("/bookmarks/my", response_model=list[BookmarkRead])
+async def my_bookmarks(user: User = Depends(get_current_user)):
+    return await BookmarksDAO().get_by_user(user.id)

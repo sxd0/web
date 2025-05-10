@@ -1,9 +1,11 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 class TagBase(BaseModel):
     name: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 class TagUpdate(BaseModel):
     name: Optional[str] = None
