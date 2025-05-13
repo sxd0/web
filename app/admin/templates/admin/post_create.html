@@ -1,0 +1,35 @@
+{% extends "admin/layout.html" %}
+{% block title %}Создать пост{% endblock %}
+{% block content %}
+<h2>Создание поста</h2>
+<form method="post">
+  <div class="mb-2">
+    <label>Заголовок:</label>
+    <input type="text" name="title" class="form-control">
+  </div>
+  <div class="mb-2">
+    <label>Содержимое:</label>
+    <textarea name="body" class="form-control"></textarea>
+  </div>
+  <div class="mb-2">
+    <label>ID автора:</label>
+    <input type="number" name="author_id" class="form-control">
+  </div>
+  <div class="form-check">
+    <input type="checkbox" name="is_closed" class="form-check-input">
+    <label class="form-check-label">Закрыт</label>
+  </div>
+  <div class="form-check">
+    <input type="checkbox" name="is_visible" class="form-check-input" checked>
+    <label class="form-check-label">Видим</label>
+  </div>
+  <div class="mb-2">
+    <label>Тип поста:</label>
+    <select name="post_type" class="form-select">
+      <option value="question">Вопрос</option>
+      <option value="answer">Ответ</option>
+    </select>
+  </div>
+  <button class="btn btn-success">Создать</button>
+</form>
+{% endblock %}

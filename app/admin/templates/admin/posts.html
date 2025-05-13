@@ -33,6 +33,7 @@
   </div>
 </form>
 
+<a href="/admin/posts/create" class="btn btn-primary mb-3">+ Новый пост</a>
 
 <table class="table table-bordered table-hover">
     <thead>
@@ -54,6 +55,10 @@
             <td>{{ post.created_at.strftime("%Y-%m-%d") }}</td>
             <td>{{ post.views }}</td>
             <td><a href="/admin/posts/{{ post.id }}/edit">Подробнее</a></td>
+            <td>
+              <a href="/admin/posts/{{ post.id }}/edit">✏</a>
+              <a href="/admin/posts/{{ post.id }}/delete" onclick="return confirm('Удалить пост?')">🗑</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

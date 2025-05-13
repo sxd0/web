@@ -7,11 +7,12 @@ from app.admin.tags import get_tags
 from app.admin.tags_inline import get_all_tags, update_post_tags
 from app.admin.votes import get_votes
 from app.admin.votes_inline import get_votes_for_post
+from app.posts.models import Post
 from app.templates import templates
 from app.admin.users import get_users, get_user, update_user, get_all_roles
 from app.admin.subscriptions_inline import get_user_subscriptions
 from app.admin.roles import get_roles, get_role, update_role, count_users_for_role
-
+from app.database import async_session_maker
 
 from app.admin import router as admin_router
 from app.users.dependencies import get_current_user
@@ -186,3 +187,38 @@ async def admin_tags(request: Request):
         "request": request,
         "tags": tags
     })
+
+
+@router.get("/posts/create", response_class=HTMLResponse)
+async def create_post_form(request: Request):
+    return templates.TemplateResponse("admin/post_create.html", {
+        "request": request
+    })
+
+@router.post("/posts/create", response_class=HTMLResponse)
+async def create_post(request: Request):
+    form = await request.form()
+    new_data = {
+        "title": form.get("title"),
+        "body": form.get("body"),
+        "author_id": int(form.get("author_id")),
+        "is_closed": form.get("is_closed") == "on",
+        "is_visible": form.get("is_visible") == "on",
+        "post_type": form.get("post_type")
+    }
+
+    async with async_session_maker() as session:
+        post = Post(**new_data)
+        session.add(post)
+        await session.commit()
+
+    return RedirectResponse(url="/admin/posts", status_code=303)
+
+@router.get("/posts/{post_id}/delete", response_class=HTMLResponse)
+async def delete_post(post_id: int):
+    async with async_session_maker() as session:
+        post = await session.get(Post, post_id)
+        if post:
+            await session.delete(post)
+            await session.commit()
+    return RedirectResponse(url="/admin/posts", status_code=303)

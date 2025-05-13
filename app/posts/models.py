@@ -23,7 +23,7 @@ class Post(Base):
     is_accepted = Column(Boolean, default=False)
     post_type = Column(Enum(PostType), nullable=False)
     vote_count = Column(Integer, default=0)
-    parent_id = Column(Integer, ForeignKey('posts.id'))
+    parent_id = Column(Integer, ForeignKey('posts.id', ondelete="CASCADE"))
 
     author = relationship('User')
     parent = relationship('Post', remote_side=[id])
