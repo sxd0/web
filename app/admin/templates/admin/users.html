@@ -17,7 +17,7 @@
   </select>
 </form>
 
-
+<a href="/admin/users/create">+ Создать пользователя</a>
 <table class="table table-bordered">
   <thead>
     <tr>
@@ -26,6 +26,7 @@
       <th>Email</th>
       <th>Дата регистрации</th>
       <th>Роль</th>
+      <th>Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -36,6 +37,10 @@
       <td>{{ user.email }}</td>
       <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
       <td>{{ user.role.name if user.role else '—' }}</td>
+      <td>
+        <a href="/admin/users/{{ user.id }}/edit">✎</a>
+        <a href="/admin/users/{{ user.id }}/delete" onclick="return confirm('Удалить пользователя?')">🗑</a>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

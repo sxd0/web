@@ -1,8 +1,8 @@
-"""initial migrations
+"""init
 
-Revision ID: bef8eb7bbf0e
+Revision ID: b5f30817acad
 Revises: 
-Create Date: 2025-05-03 15:35:02.480616
+Create Date: 2025-05-13 20:18:07.548982
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'bef8eb7bbf0e'
+revision: str = 'b5f30817acad'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -53,8 +53,8 @@ def upgrade() -> None:
     sa.Column('title', sa.String(), nullable=True),
     sa.Column('body', sa.String(), nullable=False),
     sa.Column('author_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('views', sa.Integer(), nullable=True),
     sa.Column('is_closed', sa.Boolean(), nullable=True),
     sa.Column('is_visible', sa.Boolean(), nullable=True),
@@ -62,18 +62,18 @@ def upgrade() -> None:
     sa.Column('post_type', sa.Enum('question', 'answer', name='posttype'), nullable=False),
     sa.Column('vote_count', sa.Integer(), nullable=True),
     sa.Column('parent_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['parent_id'], ['posts.id'], ),
+    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['parent_id'], ['posts.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('bookmarks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('post_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
-    sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_bookmarks_id'), 'bookmarks', ['id'], unique=False)
@@ -84,10 +84,10 @@ def upgrade() -> None:
     sa.Column('relatedpost_id', sa.Integer(), nullable=True),
     sa.Column('relateduser_id', sa.Integer(), nullable=True),
     sa.Column('message', sa.Text(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['relatedpost_id'], ['posts.id'], ),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['relatedpost_id'], ['posts.id'], ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['relateduser_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_notifications_id'), 'notifications', ['id'], unique=False)
@@ -95,8 +95,8 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('question_id', sa.Integer(), nullable=False),
     sa.Column('tag_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['question_id'], ['posts.id'], ),
-    sa.ForeignKeyConstraint(['tag_id'], ['tags.id'], ),
+    sa.ForeignKeyConstraint(['question_id'], ['posts.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['tag_id'], ['tags.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('subscriptions',
@@ -105,11 +105,11 @@ def upgrade() -> None:
     sa.Column('type', sa.Enum('user', 'post', name='subscriptiontype'), nullable=False),
     sa.Column('targetuser_id', sa.Integer(), nullable=True),
     sa.Column('targetpost_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
-    sa.ForeignKeyConstraint(['targetpost_id'], ['posts.id'], ),
-    sa.ForeignKeyConstraint(['targetuser_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['targetpost_id'], ['posts.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['targetuser_id'], ['users.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_subscriptions_id'), 'subscriptions', ['id'], unique=False)
@@ -118,8 +118,8 @@ def upgrade() -> None:
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('post_id', sa.Integer(), nullable=False),
     sa.Column('vote_type', sa.Enum('up', 'down', name='votetype'), nullable=False),
-    sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['post_id'], ['posts.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

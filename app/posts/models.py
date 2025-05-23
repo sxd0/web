@@ -14,7 +14,7 @@ class Post(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String)
     body = Column(String, nullable=False)
-    author_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    author_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     views = Column(Integer, default=0)

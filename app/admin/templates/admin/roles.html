@@ -2,12 +2,14 @@
 {% block title %}Роли{% endblock %}
 {% block content %}
 <h2>Роли</h2>
+<a href="/admin/roles/create">+ Создать роль</a>
 <table class="table table-bordered">
   <thead>
     <tr>
       <th>ID</th>
       <th>Название</th>
       <th>Кол-во пользователей</th>
+      <th>Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -16,6 +18,10 @@
       <td>{{ role.id }}</td>
       <td><a href="/admin/roles/{{ role.id }}/edit">{{ role.name }}</a></td>
       <td>{{ user_counts[role.id] }}</td>
+      <td>
+        <a href="/admin/roles/{{ role.id }}/edit">✎</a>
+        <a href="/admin/roles/{{ role.id }}/delete" onclick="return confirm('Удалить роль?')">🗑</a>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

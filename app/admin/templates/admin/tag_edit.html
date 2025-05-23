@@ -1,0 +1,9 @@
+{% extends "admin/layout.html" %}
+{% block content %}
+<h1>Редактирование тега</h1>
+<form method="post">
+    <label>Название:</label>
+    <input type="text" name="name" value="{{ tag.name }}" required>
+    <button type="submit">Сохранить</button>
+</form>
+{% endblock %}

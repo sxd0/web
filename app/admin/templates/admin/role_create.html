@@ -1,0 +1,9 @@
+{% extends "admin/layout.html" %}
+{% block content %}
+<h1>Создание роли</h1>
+<form method="post">
+  <label>Название:</label>
+  <input type="text" name="name" required>
+  <button type="submit">Создать</button>
+</form>
+{% endblock %}

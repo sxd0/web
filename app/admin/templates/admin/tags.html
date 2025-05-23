@@ -20,4 +20,18 @@
     {% endfor %}
   </tbody>
 </table>
+<a href="/admin/tags/create">+ Создать тег</a>
+<table>
+  <tr><th>ID</th><th>Имя</th><th>Действия</th></tr>
+  {% for tag in tags %}
+  <tr>
+    <td>{{ tag.id }}</td>
+    <td>{{ tag.name }}</td>
+    <td>
+      <a href="/admin/tags/{{ tag.id }}/edit">✎</a>
+      <a href="/admin/tags/{{ tag.id }}/delete" onclick="return confirm('Удалить тег?')">🗑</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
 {% endblock %}

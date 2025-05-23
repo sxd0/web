@@ -10,6 +10,7 @@
       <th>Пост</th>
       <th>Тип</th>
       <th>Дата</th>
+      <th>Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -28,6 +29,9 @@
       </td>
       <td>{{ vote.vote_type }}</td>
       <td>{{ vote.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      <td>
+        <a href="/admin/votes/{{ vote.id }}/delete" onclick="return confirm('Удалить голос?')">🗑</a>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

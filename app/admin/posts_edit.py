@@ -10,12 +10,11 @@ async def get_post_by_id(post_id: int) -> Post | None:
 
 async def update_post_data(post_id: int, data: dict) -> bool:
     async with async_session_maker() as session:
-        result = await session.execute(select(Post).where(Post.id == post_id))
-        post = result.scalar_one_or_none()
-        if not post:
-            return False
-        for key, value in data.items():
-            setattr(post, key, value)
-        post.updated_at = datetime.utcnow()
+        stmt = (
+            update(Post)
+            .where(Post.id == post_id)
+            .values(**data, updated_at=datetime.utcnow())
+        )
+        await session.execute(stmt)
         await session.commit()
         return True

@@ -15,10 +15,10 @@ class SubscriptionType(enum.Enum):
 class Subscription(Base):
     __tablename__ = 'subscriptions'
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"))
     type = Column(Enum(SubscriptionType), nullable=False)
-    targetuser_id = Column(Integer, ForeignKey('users.id'))
-    targetpost_id = Column(Integer, ForeignKey('posts.id'))
+    targetuser_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"))
+    targetpost_id = Column(Integer, ForeignKey('posts.id', ondelete="CASCADE"))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     is_active = Column(Boolean, default=True)
     

@@ -16,6 +16,7 @@
       <th>Пользователь</th>
       <th>Пост</th>
       <th>Дата</th>
+      <th>Действия</th>
     </tr>
   </thead>
   <tbody>
@@ -33,6 +34,9 @@
         {% else %} — {% endif %}
       </td>
       <td>{{ bm.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      <td>
+        <a href="/admin/bookmarks/{{ bm.id }}/delete" onclick="return confirm('Удалить закладку?')">🗑</a>
+      </td>
     </tr>
     {% endfor %}
   </tbody>
