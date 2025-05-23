@@ -88,6 +88,6 @@ async def get_my_answers(user: User = Depends(get_current_user)):
     return await PostsDAO().find_all(author_id=user.id, post_type=PostType.answer)
 
 
-@router.get("/posts/search", response_model=list[PostRead])
+@router.get("/search", response_model=list[PostRead])
 async def search_posts(query: str):
     return await PostsDAO().search_by_text(query)
