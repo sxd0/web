@@ -92,3 +92,8 @@ async def get_my_answers(user: User = Depends(get_current_user)):
 @router.get("/search", response_model=list[PostRead])
 async def search_posts(query: str):
     return await PostsDAO().search_by_text(query)
+
+
+@router.get("/{post_id}/answers", response_model=list[PostRead])
+async def get_answers(post_id: int):
+    return await PostsDAO().find_all(parent_id=post_id, post_type=PostType.answer)

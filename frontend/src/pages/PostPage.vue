@@ -20,11 +20,18 @@
       </div>
     </div>
 
-    <div v-else>
-      <p class="text-gray-500">Загрузка...</p>
-    </div>
+    <section v-if="answers.length > 0" class="space-y-4">
+      <h2 class="text-xl font-semibold mt-8">Ответы ({{ answers.length }})</h2>
+      <div
+        v-for="answer in answers"
+        :key="answer.id"
+        class="bg-gray-800 p-4 rounded-lg border border-gray-700"
+      >
+        <p class="text-gray-300 mb-2">{{ answer.body }}</p>
+        <p class="text-sm text-gray-500">🕓 {{ formatDate(answer.created_at) }}</p>
+      </div>
+    </section>
 
-    <!-- 💬 Форма ответа -->
     <div class="mt-8">
       <h2 class="text-xl font-semibold mb-2">Оставить ответ</h2>
       <textarea
@@ -46,15 +53,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { fetchPostDetailed, createAnswer } from '../services/posts.js'
+import { fetchPostDetailed, createAnswer, fetchAnswers } from '../services/posts.js'
 
 const post = ref(null)
+const answers = ref([])
 const route = useRoute()
 const answerText = ref('')
 
 onMounted(async () => {
   const id = route.params.id
   post.value = await fetchPostDetailed(id)
+  answers.value = await fetchAnswers(id)
 })
 
 function formatDate(dateStr) {
@@ -67,6 +76,6 @@ async function submitAnswer() {
   const id = route.params.id
   await createAnswer(answerText.value, id)
   answerText.value = ''
-  location.reload()
+  answers.value = await fetchAnswers(id)
 }
 </script>

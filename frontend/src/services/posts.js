@@ -32,3 +32,8 @@ export async function createAnswer(body, parentId) {
   const response = await api.post('/posts', payload)
   return response.data
 }
+
+export async function fetchAnswers(postId) {
+  const response = await api.get(`/posts/${postId}/answers`)
+  return response.data
+}
