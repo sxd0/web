@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col lg:flex-row gap-6 px-4 md:px-12 lg:px-24 xl:px-32">
-
     <section class="flex-1 space-y-6">
       <div class="flex gap-4">
         <input
@@ -27,6 +26,16 @@
             @click="goToPost(post.id)"
             class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg shadow cursor-pointer"
           >
+            <div class="flex flex-wrap gap-2 mb-2">
+              <span
+                v-for="tag in post.tags"
+                :key="tag"
+                @click.stop="searchByTag(tag)"
+                class="bg-gray-700 px-2 py-1 rounded-full text-sm cursor-pointer hover:bg-gray-600"
+              >
+                #{{ tag }}
+              </span>
+            </div>
             <h3 class="font-semibold text-lg mb-1">{{ post.title }}</h3>
             <p class="text-gray-400 text-sm truncate">{{ post.body }}</p>
           </div>
@@ -44,6 +53,16 @@
             @click="goToPost(post.id)"
             class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg shadow cursor-pointer"
           >
+            <div class="flex flex-wrap gap-2 mb-2">
+              <span
+                v-for="tag in post.tags"
+                :key="tag"
+                @click.stop="searchByTag(tag)"
+                class="bg-gray-700 px-2 py-1 rounded-full text-sm cursor-pointer hover:bg-gray-600"
+              >
+                #{{ tag }}
+              </span>
+            </div>
             <h3 class="font-semibold text-lg mb-1">{{ post.title }}</h3>
             <p class="text-gray-400 text-sm truncate">{{ post.body }}</p>
           </div>
@@ -77,8 +96,8 @@
           <span
             v-for="tag in ['vue', 'fastapi', 'sqlalchemy']"
             :key="tag"
-            class="bg-gray-700 px-2 py-1 rounded-full cursor-pointer hover:bg-gray-600"
             @click="searchByTag(tag)"
+            class="bg-gray-700 px-2 py-1 rounded-full cursor-pointer hover:bg-gray-600"
           >
             #{{ tag }}
           </span>
@@ -95,11 +114,11 @@ import { useRouter } from 'vue-router'
 import Widget from '../components/Widget.vue'
 import { fetchTopPosts, searchPosts } from '../services/posts.js'
 
+const router = useRouter()
 const topPosts = ref([])
 const searchResults = ref([])
 const searchQuery = ref('')
 const searchPerformed = ref(false)
-const router = useRouter()
 
 onMounted(async () => {
   const posts = await fetchTopPosts()

@@ -14,6 +14,7 @@ class PostCreate(BaseModel):
     body: str
     post_type: PostType
     parent_id: Optional[int] = None
+    tags: list[str] = []
 
     @model_validator(mode="after")
     def check_parent_id(self) -> "PostCreate":

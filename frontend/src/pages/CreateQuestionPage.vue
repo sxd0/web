@@ -16,10 +16,29 @@
       class="w-full p-3 bg-gray-800 border border-gray-600 rounded text-white"
     ></textarea>
 
+    <div>
+      <h2 class="font-semibold mb-2">Выберите теги:</h2>
+      <div class="flex flex-wrap gap-3">
+        <label
+          v-for="tag in availableTags"
+          :key="tag"
+          class="flex items-center gap-2 text-sm bg-gray-800 px-3 py-1 rounded"
+        >
+          <input
+            type="checkbox"
+            :value="tag"
+            v-model="selectedTags"
+            class="accent-green-500"
+          />
+          {{ tag }}
+        </label>
+      </div>
+    </div>
+
     <input
-      v-model="tagsInput"
+      v-model="customTags"
       type="text"
-      placeholder="Теги (через запятую)"
+      placeholder="Добавить свои теги (через запятую)"
       class="w-full p-3 bg-gray-800 border border-gray-600 rounded text-white"
     />
 
@@ -42,13 +61,19 @@ import { createQuestion } from '../services/posts.js'
 const router = useRouter()
 const title = ref('')
 const body = ref('')
-const tagsInput = ref('')
+const selectedTags = ref([])
+const customTags = ref('')
 const error = ref('')
+const availableTags = ['vue', 'fastapi', 'sqlalchemy', 'async', 'backend']
 
 async function submit() {
   try {
-    const tags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t)
-    const post = await createQuestion(title.value, body.value, tags)
+    const userTags = customTags.value
+      .split(',')
+      .map(t => t.trim())
+      .filter(t => t)
+    const allTags = [...selectedTags.value, ...userTags]
+    const post = await createQuestion(title.value, body.value, allTags)
     router.push(`/posts/${post.id}`)
   } catch (e) {
     error.value = 'Ошибка при создании'

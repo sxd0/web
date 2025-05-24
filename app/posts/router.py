@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.posts.models import PostType
 from app.posts.schemas import PostCreate, PostRead, PostReadDetailed, PostReadWithTags, PostUpdate
 from app.posts.dao import PostsDAO
+from app.question_tags.dao import QuestionTagsDAO
+from app.tags.dao import TagsDAO
 from app.users.dependencies import get_current_user
 from app.users.models import User
 
@@ -27,7 +29,16 @@ async def create_post(payload: PostCreate, user: User = Depends(get_current_user
         if parent.post_type != PostType.question:
             raise HTTPException(status_code=400, detail="Answer must link to a question")
 
-    return await PostsDAO().add(author_id=user.id, **payload.dict())
+        return await PostsDAO().add(author_id=user.id, **payload.dict(exclude={"tags"}))
+
+    post = await PostsDAO().add(author_id=user.id, **payload.dict(exclude={"tags"}))
+
+    for tag_name in payload.tags:
+        tag = await TagsDAO().get_or_create(name=tag_name)
+        await QuestionTagsDAO().add(question_id=post.id, tag_id=tag.id)
+
+    return post
+
 
 
 
