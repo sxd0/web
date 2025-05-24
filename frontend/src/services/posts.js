@@ -16,3 +16,8 @@ export async function fetchPostById(id) {
   const response = await api.get(`/posts/${id}`)
   return response.data
 }
+
+export async function fetchPostDetailed(id) {
+  const response = await api.get(`/posts/${id}/detailed`)
+  return response.data
+}

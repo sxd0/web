@@ -58,24 +58,25 @@ async def get_posts_with_tags():
     # Заглушка — для реализации через selectinload или отдельный кастомный запрос
     raise NotImplementedError("Реализовать при наличии времени")
 
-@router.get("/detailed", response_model=list[PostReadDetailed])
-async def get_detailed_posts():
+
+@router.get("/{post_id}/detailed", response_model=PostReadDetailed)
+async def get_post_detailed(post_id: int):
     from app.question_tags.dao import QuestionTagsDAO
     from app.votes.dao import VotesDAO
 
-    posts = await PostsDAO().find_all()
-    result = []
+    post = await PostsDAO().find_one_or_none(id=post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
 
-    for post in posts:
-        tag_links = await QuestionTagsDAO().find_all(question_id=post.id)
-        votes = await VotesDAO().find_all(post_id=post.id)
-        result.append(PostReadDetailed(
-            **post.__dict__,
-            tags=[t.tag_id for t in tag_links],
-            votes=len(votes)
-        ))
+    tag_names = [tag.name for tag in post.tags]
+    votes = await VotesDAO().find_all(post_id=post.id)
 
-    return result
+    return {
+        **post.__dict__,
+        "tags": tag_names,
+        "votes": len(votes),
+    }
+
 
 
 

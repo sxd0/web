@@ -42,8 +42,9 @@ class PostRead(BaseModel):
 
 
 class PostReadDetailed(PostRead):
-    tags: list[int] = []
+    tags: list[str] = []
     votes: int = 0
+
 
 
 class PostReadWithTags(PostRead):
