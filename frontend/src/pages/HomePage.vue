@@ -1,12 +1,12 @@
 <template>
-  <main class="container mx-auto p-6 space-y-6">
+  <main class="w-full px-4 md:px-12 lg:px-32 xl:px-64 space-y-6">
     <div class="flex items-center gap-4">
       <input
         v-model="searchQuery"
         @keyup.enter="performSearch"
         type="text"
         placeholder="Поиск по вопросам..."
-        class="flex-1 p-2 bg-gray-700 border border-gray-600 rounded text-white"
+        class="flex-1 p-2 bg-gray-800 border border-gray-600 rounded text-white"
       />
       <button @click="performSearch" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">
         Найти
@@ -18,6 +18,7 @@
         <li
           v-for="post in topPosts"
           :key="post.id"
+          @click="goToPost(post.id)"
           class="hover:bg-gray-700 p-2 rounded cursor-pointer"
         >
           {{ post.title }}
@@ -42,7 +43,7 @@
     <Widget v-if="searchResults.length > 0" title="🔎 Результаты поиска">
       <ul class="space-y-2">
         <li
-          v-for="post in topPosts"
+          v-for="post in searchResults"
           :key="post.id"
           @click="goToPost(post.id)"
           class="hover:bg-gray-700 p-2 rounded cursor-pointer"
@@ -60,10 +61,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Widget from '../components/Widget.vue'
 import { fetchTopPosts, searchPosts } from '../services/posts.js'
-import { useRouter } from 'vue-router'
-
 
 const router = useRouter()
 const topPosts = ref([])
@@ -89,5 +89,4 @@ async function performSearch() {
 function goToPost(id) {
   router.push(`/posts/${id}`)
 }
-
 </script>

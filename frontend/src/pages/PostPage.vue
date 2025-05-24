@@ -1,5 +1,5 @@
 <template>
-  <main class="container mx-auto p-6 space-y-4">
+  <main class="w-full px-4 md:px-12 lg:px-32 xl:px-64 space-y-6">
     <div v-if="post">
       <h1 class="text-2xl font-bold mb-2">{{ post.title }}</h1>
       <p class="text-gray-300 mb-4">{{ post.body }}</p>
