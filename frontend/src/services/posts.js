@@ -21,3 +21,14 @@ export async function fetchPostDetailed(id) {
   const response = await api.get(`/posts/${id}/detailed`)
   return response.data
 }
+
+export async function createAnswer(body, parentId) {
+  const payload = {
+    title: 'Ответ',
+    body,
+    post_type: 'answer',
+    parent_id: parseInt(parentId)
+  }
+  const response = await api.post('/posts', payload)
+  return response.data
+}
