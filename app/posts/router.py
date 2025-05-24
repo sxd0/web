@@ -9,7 +9,7 @@ router = APIRouter(prefix="/posts", tags=["Посты"])
 
 @router.get("/", response_model=list[PostRead])
 async def get_all_posts():
-    return await PostsDAO().find_all()
+    return await PostsDAO().find_all(post_type=PostType.question)
 
 @router.get("/{post_id}", response_model=PostRead)
 async def get_post(post_id: int):
@@ -91,7 +91,9 @@ async def get_my_answers(user: User = Depends(get_current_user)):
 
 @router.get("/search", response_model=list[PostRead])
 async def search_posts(query: str):
-    return await PostsDAO().search_by_text(query)
+    results = await PostsDAO().search_by_text(query)
+    return [r for r in results if r.post_type == PostType.question]
+
 
 
 @router.get("/{post_id}/answers", response_model=list[PostRead])

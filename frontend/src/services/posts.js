@@ -37,3 +37,14 @@ export async function fetchAnswers(postId) {
   const response = await api.get(`/posts/${postId}/answers`)
   return response.data
 }
+
+export async function createQuestion(title, body, tags = []) {
+  const payload = {
+    title,
+    body,
+    post_type: 'question',
+    tags
+  }
+  const response = await api.post('/posts', payload)
+  return response.data
+}

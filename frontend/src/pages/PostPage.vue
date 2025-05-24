@@ -54,16 +54,29 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchPostDetailed, createAnswer, fetchAnswers } from '../services/posts.js'
+import { getCurrentUser } from '../services/auth.js'
 
 const post = ref(null)
 const answers = ref([])
 const route = useRoute()
 const answerText = ref('')
+const isAuthenticated = ref(false)
 
 onMounted(async () => {
   const id = route.params.id
   post.value = await fetchPostDetailed(id)
   answers.value = await fetchAnswers(id)
+})
+
+onMounted(async () => {
+  const id = route.params.id
+  post.value = await fetchPostDetailed(id)
+  answers.value = await fetchAnswers(id)
+
+  try {
+    await getCurrentUser()
+    isAuthenticated.value = true
+  } catch {}
 })
 
 function formatDate(dateStr) {
@@ -72,7 +85,7 @@ function formatDate(dateStr) {
 }
 
 async function submitAnswer() {
-  if (!answerText.value.trim()) return
+  if (!isAuthenticated.value || !answerText.value.trim()) return
   const id = route.params.id
   await createAnswer(answerText.value, id)
   answerText.value = ''
