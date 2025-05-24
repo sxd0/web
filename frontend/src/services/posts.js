@@ -7,8 +7,6 @@ export async function fetchTopPosts({ sort = 'new', tag = null, limit = 10, offs
   return response.data
 }
 
-
-
 export async function searchPosts(query) {
   const response = await api.get('/posts', {
     params: { search: query }
@@ -85,3 +83,7 @@ export async function updateQuestion(postId, title, body, tags = []) {
   return response.data
 }
 
+export async function fetchUserPosts(userId) {
+  const response = await api.get(`/posts?author_id=${userId}&limit=100`)
+  return response.data
+}

@@ -16,6 +16,7 @@ router = APIRouter(prefix="/posts", tags=["Посты"])
 async def get_all_posts(
     sort: str = "new",
     tag: str | None = None,
+    author_id: int | None = None,
     limit: int = 10,
     offset: int = 0,
 ):
@@ -23,6 +24,9 @@ async def get_all_posts(
 
     if tag:
         query = query.join(Post.tags).where(Tag.name == tag)
+
+    if author_id:
+        query = query.where(Post.author_id == author_id)
 
     if sort == "popular":
         query = query.order_by(Post.vote_count.desc())
@@ -34,6 +38,7 @@ async def get_all_posts(
     async with async_session_maker() as session:
         result = await session.execute(query)
         return result.scalars().all()
+
 
 
 

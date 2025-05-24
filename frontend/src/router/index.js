@@ -4,6 +4,7 @@ import PostPage from '../pages/PostPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import CreateQuestionPage from '../pages/CreateQuestionPage.vue'
 import EditQuestionPage from '../pages/EditQuestionPage.vue'
+import ProfilePage from '../pages/ProfilePage.vue'
 
 
 const routes = [
@@ -12,6 +13,7 @@ const routes = [
   { path: '/login', component: LoginPage },
   { path: '/create', component: CreateQuestionPage },
   { path: '/posts/:id/edit', component: EditQuestionPage },
+  { path: '/profile', component: ProfilePage },
 
 ]
 

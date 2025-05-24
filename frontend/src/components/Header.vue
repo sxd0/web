@@ -12,9 +12,14 @@
         <router-link to="/create" class="hover:text-green-400">Создать</router-link>
 
         <template v-if="user">
-          <span class="text-sm text-gray-400">{{ user.username }}</span>
-          <button @click="handleLogout" class="text-red-400 hover:text-red-300 text-sm">Выйти</button>
+          <router-link to="/profile" class="text-green-400 hover:underline text-sm">
+            Профиль
+          </router-link>
+          <button @click="handleLogout" class="text-red-400 hover:underline text-sm">
+            Выйти
+          </button>
         </template>
+
 
         <template v-else>
           <router-link to="/login" class="hover:text-green-400">Войти</router-link>
@@ -42,5 +47,7 @@ async function handleLogout() {
   await logout()
   await fetchUser()
   router.push('/')
+  location.reload()
 }
+
 </script>

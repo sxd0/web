@@ -204,6 +204,13 @@ async function loadPosts() {
     limit: pageSize,
     offset: (page.value - 1) * pageSize
   })
+
+  if (posts.length === 0 && page.value > 1) {
+    page.value--
+    return
+  }
+
   topPosts.value = posts
+
 }
 </script>

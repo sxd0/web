@@ -31,15 +31,20 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { login, getCurrentUser } from '../services/auth.js'
+import { useAuth } from '../stores/authStore.js'
+
 
 const email = ref('')
 const password = ref('')
 const error = ref('')
 const router = useRouter()
+const { fetchUser } = useAuth()
+
 
 async function submit() {
   try {
     await login(email.value, password.value)
+    await fetchUser()
     await getCurrentUser()
     router.push('/')
   } catch (e) {
