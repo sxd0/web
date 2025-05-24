@@ -11,3 +11,8 @@ export async function searchPosts(query) {
   })
   return response.data
 }
+
+export async function fetchPostById(id) {
+  const response = await api.get(`/posts/${id}`)
+  return response.data
+}

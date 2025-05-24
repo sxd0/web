@@ -42,13 +42,18 @@
     <Widget v-if="searchResults.length > 0" title="🔎 Результаты поиска">
       <ul class="space-y-2">
         <li
-          v-for="post in searchResults"
+          v-for="post in topPosts"
           :key="post.id"
+          @click="goToPost(post.id)"
           class="hover:bg-gray-700 p-2 rounded cursor-pointer"
         >
           {{ post.title }}
         </li>
       </ul>
+    </Widget>
+
+    <Widget v-else-if="searchQuery && searchPerformed" title="🔎 Результаты поиска">
+      <p class="text-gray-400">Ничего не найдено</p>
     </Widget>
   </main>
 </template>
@@ -57,10 +62,14 @@
 import { ref, onMounted } from 'vue'
 import Widget from '../components/Widget.vue'
 import { fetchTopPosts, searchPosts } from '../services/posts.js'
+import { useRouter } from 'vue-router'
 
+
+const router = useRouter()
 const topPosts = ref([])
 const searchResults = ref([])
 const searchQuery = ref('')
+const searchPerformed = ref(false)
 
 onMounted(async () => {
   const posts = await fetchTopPosts()
@@ -68,9 +77,17 @@ onMounted(async () => {
 })
 
 async function performSearch() {
+  searchPerformed.value = true
   if (searchQuery.value.trim()) {
     const results = await searchPosts(searchQuery.value)
     searchResults.value = results
+  } else {
+    searchResults.value = []
   }
 }
+
+function goToPost(id) {
+  router.push(`/posts/${id}`)
+}
+
 </script>
