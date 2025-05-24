@@ -1,9 +1,13 @@
 import api from './api'
 
-export async function fetchTopPosts() {
-  const response = await api.get('/posts')
+export async function fetchTopPosts({ sort = 'new', tag = null, limit = 10, offset = 0 }) {
+  let url = `/posts?sort=${sort}&limit=${limit}&offset=${offset}`
+  if (tag) url += `&tag=${tag}`
+  const response = await api.get(url)
   return response.data
 }
+
+
 
 export async function searchPosts(query) {
   const response = await api.get('/posts', {
@@ -69,3 +73,15 @@ export async function unlikePost(postId) {
     }
   })
 }
+
+export async function updateQuestion(postId, title, body, tags = []) {
+  const payload = {
+    title,
+    body,
+    post_type: 'question',
+    tags
+  }
+  const response = await api.put(`/posts/${postId}`, payload)
+  return response.data
+}
+

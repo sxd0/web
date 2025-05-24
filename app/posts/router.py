@@ -1,17 +1,41 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.posts.models import PostType
+from sqlalchemy import select
+from app.posts.models import Post, PostType
 from app.posts.schemas import PostCreate, PostRead, PostReadDetailed, PostReadWithTags, PostUpdate
 from app.posts.dao import PostsDAO
 from app.question_tags.dao import QuestionTagsDAO
 from app.tags.dao import TagsDAO
+from app.tags.models import Tag
 from app.users.dependencies import get_current_user
 from app.users.models import User
+from app.database import async_session_maker
 
 router = APIRouter(prefix="/posts", tags=["Посты"])
 
 @router.get("/", response_model=list[PostRead])
-async def get_all_posts():
-    return await PostsDAO().find_all(post_type=PostType.question)
+async def get_all_posts(
+    sort: str = "new",
+    tag: str | None = None,
+    limit: int = 10,
+    offset: int = 0,
+):
+    query = select(Post).where(Post.post_type == PostType.question)
+
+    if tag:
+        query = query.join(Post.tags).where(Tag.name == tag)
+
+    if sort == "popular":
+        query = query.order_by(Post.vote_count.desc())
+    else:
+        query = query.order_by(Post.created_at.desc())
+
+    query = query.offset(offset).limit(limit)
+
+    async with async_session_maker() as session:
+        result = await session.execute(query)
+        return result.scalars().all()
+
+
 
 @router.get("/{post_id}", response_model=PostRead)
 async def get_post(post_id: int):
@@ -42,15 +66,25 @@ async def create_post(payload: PostCreate, user: User = Depends(get_current_user
 
 
 
-@router.put("/{post_id}", response_model=dict)
-async def update_post(post_id: int, payload: PostUpdate, user: User = Depends(get_current_user)):
+@router.put("/{post_id}", response_model=PostRead)
+async def update_post(post_id: int, payload: PostCreate, user: User = Depends(get_current_user)):
     post = await PostsDAO().find_one_or_none(id=post_id)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
+
     if post.author_id != user.id:
-        raise HTTPException(status_code=403, detail="Not allowed")
-    await PostsDAO().update(filter_by={"id": post_id}, **payload.dict(exclude_none=True))
-    return {"status": "updated"}
+        raise HTTPException(status_code=403, detail="You are not the author")
+
+    post_list = await PostsDAO().update({"id": post_id}, **payload.dict(exclude={"tags"}))
+    post = post_list[0]
+
+    await QuestionTagsDAO().delete_all_for_post(post_id)
+
+    for tag_name in payload.tags:
+        tag = await TagsDAO().get_or_create(name=tag_name)
+        await QuestionTagsDAO().add(question_id=post.id, tag_id=tag.id)
+
+    return post
 
 
 @router.delete("/{post_id}", response_model=dict)

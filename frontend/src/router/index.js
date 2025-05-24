@@ -3,6 +3,7 @@ import HomePage from '../pages/HomePage.vue'
 import PostPage from '../pages/PostPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import CreateQuestionPage from '../pages/CreateQuestionPage.vue'
+import EditQuestionPage from '../pages/EditQuestionPage.vue'
 
 
 const routes = [
@@ -10,6 +11,8 @@ const routes = [
   { path: '/posts/:id', component: PostPage },
   { path: '/login', component: LoginPage },
   { path: '/create', component: CreateQuestionPage },
+  { path: '/posts/:id/edit', component: EditQuestionPage },
+
 ]
 
 const router = createRouter({

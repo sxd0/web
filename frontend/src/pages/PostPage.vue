@@ -3,6 +3,14 @@
     <div v-if="post">
       <div class="flex items-center gap-4 mb-4">
         <h1 class="text-2xl font-bold">{{ post.title }}</h1>
+        <router-link
+          v-if="isAuthor"
+          :to="`/posts/${post.id}/edit`"
+          class="text-blue-400 hover:underline text-sm"
+        >
+          ✏️ Редактировать
+        </router-link>
+
         <button
           @click="toggleLike"
           class="px-3 py-1 text-sm rounded bg-gray-700 hover:bg-gray-600"
@@ -72,6 +80,7 @@ const route = useRoute()
 const answerText = ref('')
 const isAuthenticated = ref(false)
 const myVote = ref(null)
+const isAuthor = ref(false)
 
 
 onMounted(async () => {
@@ -103,6 +112,10 @@ onMounted(async () => {
   } catch {}
 })
 
+onMounted(async () => {
+  const user = await getCurrentUser()
+  isAuthor.value = post.value && post.value.author_id === user.id
+})
 
 function formatDate(dateStr) {
   const date = new Date(dateStr)

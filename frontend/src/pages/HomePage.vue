@@ -45,7 +45,21 @@
       <p v-else-if="searchQuery && searchPerformed" class="text-gray-400">Ничего не найдено.</p>
 
       <div v-else>
-        <h2 class="text-xl font-semibold mb-2">🧠 Популярные вопросы</h2>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <h2 class="text-xl font-semibold">🧠 Популярные вопросы</h2>
+          <div class="flex items-center gap-3">
+            <label class="text-gray-400">Сортировать:</label>
+            <select v-model="sortOption" @change="loadPosts" class="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white">
+              <option value="new">По дате</option>
+              <option value="popular">По популярности</option>
+            </select>
+            <div v-if="activeTag">
+              <span class="text-sm text-green-400">Тег: #{{ activeTag }}</span>
+              <button @click="clearTag" class="ml-2 text-red-400 text-sm hover:underline">Сбросить</button>
+            </div>
+          </div>
+        </div>
+
         <div class="space-y-4">
           <div
             v-for="post in topPosts"
@@ -67,6 +81,25 @@
             <p class="text-gray-400 text-sm truncate">{{ post.body }}</p>
           </div>
         </div>
+      <div class="flex justify-between items-center mt-6">
+        <button
+          :disabled="page === 1"
+          @click="() => { page--; loadPosts() }"
+          class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded disabled:opacity-40"
+        >
+          ⬅️ Назад
+        </button>
+
+        <span class="text-gray-400 text-sm">Страница {{ page }}</span>
+
+        <button
+          @click="() => { page++; loadPosts() }"
+          class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded"
+        >
+          Вперёд ➡️
+        </button>
+      </div>
+
       </div>
     </section>
 
@@ -119,11 +152,23 @@ const topPosts = ref([])
 const searchResults = ref([])
 const searchQuery = ref('')
 const searchPerformed = ref(false)
+const sortOption = ref("new")
+const activeTag = ref(null)
 
-onMounted(async () => {
-  const posts = await fetchTopPosts()
-  topPosts.value = posts.slice(0, 10)
+const page = ref(1)
+const pageSize = 5
+
+
+// onMounted(async () => {
+//   const posts = await fetchTopPosts()
+//   topPosts.value = posts.slice(0, 10)
+// })
+
+onMounted(() => {
+  loadPosts()
 })
+
+
 
 async function performSearch() {
   searchPerformed.value = true
@@ -140,7 +185,25 @@ function goToPost(id) {
 }
 
 function searchByTag(tag) {
-  searchQuery.value = tag
-  performSearch()
+  activeTag.value = tag
+  page.value = 1
+  loadPosts()
+}
+
+function clearTag() {
+  activeTag.value = null
+  page.value = 1
+  loadPosts()
+}
+
+
+async function loadPosts() {
+  const posts = await fetchTopPosts({
+    sort: sortOption.value,
+    tag: activeTag.value,
+    limit: pageSize,
+    offset: (page.value - 1) * pageSize
+  })
+  topPosts.value = posts
 }
 </script>

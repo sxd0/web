@@ -46,6 +46,7 @@ class PostReadDetailed(PostRead):
     tags: list[str] = []
     votes: int = 0
 
+    model_config = {"from_attributes": True}
 
 
 class PostReadWithTags(PostRead):
