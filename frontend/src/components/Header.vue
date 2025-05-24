@@ -1,16 +1,25 @@
 <template>
-  <header class="bg-gray-800 p-4 shadow">
-    <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-xl font-bold">QuestFlow</h1>
-      <nav class="flex gap-4 text-gray-300">
-        <RouterLink to="/" class="hover:text-white">Главная</RouterLink>
-        <RouterLink to="/create" class="hover:text-white">Создать</RouterLink>
-        <RouterLink to="/profile" class="hover:text-white">Профиль</RouterLink>
-      </nav>
-    </div>
+  <header class="w-full bg-gray-900 px-6 py-3 shadow mb-6">
+    <nav class="max-w-7xl mx-auto flex justify-between items-center">
+      <div
+        @click="goHome"
+        class="text-xl font-bold text-green-400 cursor-pointer"
+      >
+        QueStudio
+      </div>
+      <div class="space-x-4">
+        <router-link to="/" class="hover:text-green-400">Главная</router-link>
+        <router-link to="/create" class="hover:text-green-400">Создать</router-link>
+        <router-link to="/profile" class="hover:text-green-400">Профиль</router-link>
+      </div>
+    </nav>
   </header>
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+function goHome() {
+  router.push('/')
+}
 </script>

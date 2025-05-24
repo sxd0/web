@@ -1,62 +1,92 @@
 <template>
-  <main class="w-full px-4 md:px-12 lg:px-32 xl:px-64 space-y-6">
-    <div class="flex items-center gap-4">
-      <input
-        v-model="searchQuery"
-        @keyup.enter="performSearch"
-        type="text"
-        placeholder="Поиск по вопросам..."
-        class="flex-1 p-2 bg-gray-800 border border-gray-600 rounded text-white"
-      />
-      <button @click="performSearch" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">
-        Найти
-      </button>
-    </div>
+  <div class="flex flex-col lg:flex-row gap-6 px-4 md:px-12 lg:px-24 xl:px-32">
 
-    <Widget title="🔥 Топ посты">
-      <ul class="space-y-2">
-        <li
-          v-for="post in topPosts"
-          :key="post.id"
-          @click="goToPost(post.id)"
-          class="hover:bg-gray-700 p-2 rounded cursor-pointer"
+    <section class="flex-1 space-y-6">
+      <div class="flex gap-4">
+        <input
+          v-model="searchQuery"
+          @keyup.enter="performSearch"
+          type="text"
+          placeholder="Поиск по вопросам..."
+          class="flex-1 p-3 bg-gray-800 border border-gray-600 rounded text-white"
+        />
+        <button
+          @click="performSearch"
+          class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white"
         >
-          {{ post.title }}
-        </li>
-      </ul>
-    </Widget>
+          Найти
+        </button>
+      </div>
 
-    <Widget title="🕒 Последние вопросы">
-      <ul class="space-y-2">
-        <li class="hover:bg-gray-700 p-2 rounded cursor-pointer">Вопрос 1</li>
-        <li class="hover:bg-gray-700 p-2 rounded cursor-pointer">Вопрос 2</li>
-      </ul>
-    </Widget>
+      <div v-if="searchResults.length > 0">
+        <h2 class="text-xl font-semibold mb-2">🔍 Результаты поиска</h2>
+        <div class="space-y-4">
+          <div
+            v-for="post in searchResults"
+            :key="post.id"
+            @click="goToPost(post.id)"
+            class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg shadow cursor-pointer"
+          >
+            <h3 class="font-semibold text-lg mb-1">{{ post.title }}</h3>
+            <p class="text-gray-400 text-sm truncate">{{ post.body }}</p>
+          </div>
+        </div>
+      </div>
 
-    <Widget title="🏷️ Популярные теги">
-      <ul class="space-y-2">
-        <li class="hover:bg-gray-700 p-2 rounded cursor-pointer">#vue</li>
-        <li class="hover:bg-gray-700 p-2 rounded cursor-pointer">#fastapi</li>
-      </ul>
-    </Widget>
+      <p v-else-if="searchQuery && searchPerformed" class="text-gray-400">Ничего не найдено.</p>
 
-    <Widget v-if="searchResults.length > 0" title="🔎 Результаты поиска">
-      <ul class="space-y-2">
-        <li
-          v-for="post in searchResults"
-          :key="post.id"
-          @click="goToPost(post.id)"
-          class="hover:bg-gray-700 p-2 rounded cursor-pointer"
-        >
-          {{ post.title }}
-        </li>
-      </ul>
-    </Widget>
+      <div v-else>
+        <h2 class="text-xl font-semibold mb-2">🧠 Популярные вопросы</h2>
+        <div class="space-y-4">
+          <div
+            v-for="post in topPosts"
+            :key="post.id"
+            @click="goToPost(post.id)"
+            class="bg-gray-800 hover:bg-gray-700 p-4 rounded-lg shadow cursor-pointer"
+          >
+            <h3 class="font-semibold text-lg mb-1">{{ post.title }}</h3>
+            <p class="text-gray-400 text-sm truncate">{{ post.body }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <Widget v-else-if="searchQuery && searchPerformed" title="🔎 Результаты поиска">
-      <p class="text-gray-400">Ничего не найдено</p>
-    </Widget>
-  </main>
+    <aside class="w-full lg:w-1/3 space-y-6">
+      <Widget title="🔥 Топ посты">
+        <ul class="space-y-2">
+          <li
+            v-for="post in topPosts"
+            :key="post.id"
+            @click="goToPost(post.id)"
+            class="hover:bg-gray-700 p-2 rounded cursor-pointer"
+          >
+            {{ post.title }}
+          </li>
+        </ul>
+      </Widget>
+
+      <Widget title="🕒 Последние вопросы">
+        <ul class="space-y-2">
+          <li class="hover:bg-gray-700 p-2 rounded cursor-pointer">Вопрос 1</li>
+          <li class="hover:bg-gray-700 p-2 rounded cursor-pointer">Вопрос 2</li>
+        </ul>
+      </Widget>
+
+      <Widget title="🏷️ Популярные теги">
+        <div class="flex flex-wrap gap-2">
+          <span
+            v-for="tag in ['vue', 'fastapi', 'sqlalchemy']"
+            :key="tag"
+            class="bg-gray-700 px-2 py-1 rounded-full cursor-pointer hover:bg-gray-600"
+            @click="searchByTag(tag)"
+          >
+            #{{ tag }}
+          </span>
+        </div>
+      </Widget>
+    </aside>
+
+  </div>
 </template>
 
 <script setup>
@@ -65,15 +95,15 @@ import { useRouter } from 'vue-router'
 import Widget from '../components/Widget.vue'
 import { fetchTopPosts, searchPosts } from '../services/posts.js'
 
-const router = useRouter()
 const topPosts = ref([])
 const searchResults = ref([])
 const searchQuery = ref('')
 const searchPerformed = ref(false)
+const router = useRouter()
 
 onMounted(async () => {
   const posts = await fetchTopPosts()
-  topPosts.value = posts.slice(0, 5)
+  topPosts.value = posts.slice(0, 10)
 })
 
 async function performSearch() {
@@ -88,5 +118,10 @@ async function performSearch() {
 
 function goToPost(id) {
   router.push(`/posts/${id}`)
+}
+
+function searchByTag(tag) {
+  searchQuery.value = tag
+  performSearch()
 }
 </script>
