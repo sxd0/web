@@ -1,7 +1,16 @@
 <template>
   <main class="w-full px-4 md:px-12 lg:px-32 xl:px-64 space-y-6">
     <div v-if="post">
-      <h1 class="text-2xl font-bold mb-2">{{ post.title }}</h1>
+      <div class="flex items-center gap-4 mb-4">
+        <h1 class="text-2xl font-bold">{{ post.title }}</h1>
+        <button
+          @click="toggleLike"
+          class="px-3 py-1 text-sm rounded bg-gray-700 hover:bg-gray-600"
+        >
+          👍 {{ post.votes }}
+        </button>
+      </div>
+
       <p class="text-gray-300 mb-4">{{ post.body }}</p>
 
       <div class="text-sm text-gray-400 space-y-1">
@@ -54,6 +63,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchPostDetailed, createAnswer, fetchAnswers } from '../services/posts.js'
+import { getMyVote, likePost, unlikePost } from '../services/posts.js'
 import { getCurrentUser } from '../services/auth.js'
 
 const post = ref(null)
@@ -61,6 +71,8 @@ const answers = ref([])
 const route = useRoute()
 const answerText = ref('')
 const isAuthenticated = ref(false)
+const myVote = ref(null)
+
 
 onMounted(async () => {
   const id = route.params.id
@@ -79,6 +91,19 @@ onMounted(async () => {
   } catch {}
 })
 
+onMounted(async () => {
+  const id = route.params.id
+  post.value = await fetchPostDetailed(id)
+  answers.value = await fetchAnswers(id)
+
+  try {
+    await getCurrentUser()
+    isAuthenticated.value = true
+    myVote.value = await getMyVote(id)
+  } catch {}
+})
+
+
 function formatDate(dateStr) {
   const date = new Date(dateStr)
   return date.toLocaleString()
@@ -91,4 +116,21 @@ async function submitAnswer() {
   answerText.value = ''
   answers.value = await fetchAnswers(id)
 }
+
+async function toggleLike() {
+  if (!isAuthenticated.value) return
+
+  const id = post.value.id
+  if (myVote.value) {
+    await unlikePost(id)
+    myVote.value = null
+  } else {
+    await likePost(id)
+    myVote.value = { vote_type: 'up' }
+  }
+
+  const updated = await fetchPostDetailed(id)
+  post.value = updated
+}
+
 </script>

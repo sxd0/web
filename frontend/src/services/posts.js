@@ -48,3 +48,24 @@ export async function createQuestion(title, body, tags = []) {
   const response = await api.post('/posts', payload)
   return response.data
 }
+
+export async function getMyVote(postId) {
+  const response = await api.get(`/votes/votes/my/${postId}`)
+  return response.data
+}
+
+export async function likePost(postId) {
+  await api.post('/votes', {
+    post_id: postId,
+    vote_type: 'up'
+  })
+}
+
+export async function unlikePost(postId) {
+  await api.delete('/votes', {
+    data: {
+      post_id: postId,
+      vote_type: 'up'
+    }
+  })
+}
