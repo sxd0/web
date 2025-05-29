@@ -36,7 +36,18 @@
                 #{{ tag }}
               </span>
             </div>
-            <h3 class="font-semibold text-lg mb-1">{{ post.title }}</h3>
+            <h3 class="font-semibold text-lg mb-1 flex items-center gap-2">
+              {{ post.title }}
+              <span
+                @click.stop="toggleBookmark(post)"
+                class="cursor-pointer text-yellow-400 text-xl"
+              >
+                <span v-if="post.is_bookmarked">★</span>
+                <span v-else>☆</span>
+              </span>
+            </h3>
+
+
             <p class="text-gray-400 text-sm truncate">{{ post.body }}</p>
           </div>
         </div>
@@ -77,7 +88,18 @@
                 #{{ tag }}
               </span>
             </div>
-            <h3 class="font-semibold text-lg mb-1">{{ post.title }}</h3>
+            <h3 class="font-semibold text-lg mb-1 flex items-center gap-2">
+              {{ post.title }}
+              <span
+                @click.stop="toggleBookmark(post)"
+                class="text-yellow-400 cursor-pointer text-xl"
+              >
+                <span v-if="post.is_bookmarked">★</span>
+                <span v-else>☆</span>
+              </span>
+            </h3>
+
+
             <p class="text-gray-400 text-sm truncate">{{ post.body }}</p>
           </div>
         </div>
@@ -142,10 +164,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import Widget from '../components/Widget.vue'
 import { fetchTopPosts, searchPosts } from '../services/posts.js'
+import axios from 'axios'
 
 const router = useRouter()
 const topPosts = ref([])
@@ -159,15 +182,22 @@ const page = ref(1)
 const pageSize = 5
 
 
-// onMounted(async () => {
-//   const posts = await fetchTopPosts()
-//   topPosts.value = posts.slice(0, 10)
-// })
-
 onMounted(() => {
   loadPosts()
 })
 
+
+watch(
+  () => router.fullPath,
+  (newPath) => {
+    if (newPath.startsWith('/')) {
+      searchQuery.value = ''
+      searchResults.value = []
+      searchPerformed.value = false
+      loadPosts()
+    }
+  }
+)
 
 
 async function performSearch() {
@@ -179,6 +209,7 @@ async function performSearch() {
     searchResults.value = []
   }
 }
+
 
 function goToPost(id) {
   router.push(`/posts/${id}`)
@@ -213,4 +244,33 @@ async function loadPosts() {
   topPosts.value = posts
 
 }
+
+
+const toggleBookmark = async (post) => {
+  try {
+    if (post.is_bookmarked) {
+      await axios.delete(`http://localhost:8000/bookmarks/${post.id}`, {
+        withCredentials: true
+      })
+      post.is_bookmarked = false
+    } else {
+      await axios.post(
+        `http://localhost:8000/bookmarks/`,
+        { post_id: post.id },
+        { withCredentials: true }
+      )
+      post.is_bookmarked = true
+    }
+  } catch (err) {
+    console.error('Ошибка при переключении закладки', err)
+  }
+}
+
+
+
+async function handleBookmarkToggle(post) {
+  post.is_bookmarked = await toggleBookmark(post.id, post.is_bookmarked)
+}
+
+
 </script>

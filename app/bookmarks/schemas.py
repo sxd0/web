@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+from app.posts.schemas import PostRead
+
 class BookmarkBase(BaseModel):
     post_id: int
 
@@ -11,7 +13,7 @@ class BookmarkCreate(BaseModel):
 class BookmarkRead(BaseModel):
     id: int
     user_id: int
-    post_id: int
+    post: PostRead
     is_active: bool
     created_at: datetime
 

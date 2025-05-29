@@ -38,6 +38,7 @@ class PostRead(BaseModel):
     views: int
     vote_count: int
     parent_id: int | None = None
+    answer_count: int = 0
 
     model_config = {"from_attributes": True}
 

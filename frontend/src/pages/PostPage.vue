@@ -2,7 +2,14 @@
   <main class="w-full px-4 md:px-12 lg:px-32 xl:px-64 space-y-6">
     <div v-if="post">
       <div class="flex items-center gap-4 mb-4">
-        <h1 class="text-2xl font-bold">{{ post.title }}</h1>
+        <h1 class="text-2xl font-bold flex items-center gap-2">
+          {{ post.title }}
+          <span @click="toggleBookmark" class="text-yellow-400 cursor-pointer text-xl">
+            <span v-if="isBookmarked">★</span>
+            <span v-else>☆</span>
+          </span>
+        </h1>
+
         <router-link
           v-if="isAuthor"
           :to="`/posts/${post.id}/edit`"
@@ -73,6 +80,9 @@ import { useRoute } from 'vue-router'
 import { fetchPostDetailed, createAnswer, fetchAnswers } from '../services/posts.js'
 import { getMyVote, likePost, unlikePost } from '../services/posts.js'
 import { getCurrentUser } from '../services/auth.js'
+import axios from 'axios'
+import api from '../services/api'
+import { toggleBookmark as toggleBookmarkAPI } from '../services/bookmarks'
 
 const post = ref(null)
 const answers = ref([])
@@ -81,17 +91,13 @@ const answerText = ref('')
 const isAuthenticated = ref(false)
 const myVote = ref(null)
 const isAuthor = ref(false)
+const isBookmarked = ref(false)
 
 
 onMounted(async () => {
   const id = route.params.id
   post.value = await fetchPostDetailed(id)
-  answers.value = await fetchAnswers(id)
-})
-
-onMounted(async () => {
-  const id = route.params.id
-  post.value = await fetchPostDetailed(id)
+  isBookmarked.value = response.is_bookmarked
   answers.value = await fetchAnswers(id)
 
   try {
@@ -100,17 +106,6 @@ onMounted(async () => {
   } catch {}
 })
 
-onMounted(async () => {
-  const id = route.params.id
-  post.value = await fetchPostDetailed(id)
-  answers.value = await fetchAnswers(id)
-
-  try {
-    await getCurrentUser()
-    isAuthenticated.value = true
-    myVote.value = await getMyVote(id)
-  } catch {}
-})
 
 onMounted(async () => {
   const user = await getCurrentUser()
@@ -143,7 +138,31 @@ async function toggleLike() {
   }
 
   const updated = await fetchPostDetailed(id)
+  isBookmarked.value = response.is_bookmarked
   post.value = updated
 }
+
+const toggleBookmark = async () => {
+  try {
+    if (!post.value) return
+    const postId = post.value.id
+    console.log("Добавляем в закладки пост:", postId)
+
+    if (isBookmarked.value) {
+      await api.delete(`/bookmarks/${postId}`)
+      isBookmarked.value = false
+    } else {
+      await api.post(`/bookmarks/`, { post_id: postId })
+      isBookmarked.value = true
+    }
+  } catch (err) {
+    console.error('Ошибка при переключении закладки', err)
+  }
+}
+
+
+
+
+
 
 </script>

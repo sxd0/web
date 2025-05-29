@@ -14,6 +14,11 @@ const routes = [
   { path: '/create', component: CreateQuestionPage },
   { path: '/posts/:id/edit', component: EditQuestionPage },
   { path: '/profile', component: ProfilePage },
+  {
+    path: '/bookmarks',
+    name: 'Bookmarks',
+    component: () => import('../pages/BookmarkPage.vue')
+  }
 
 ]
 

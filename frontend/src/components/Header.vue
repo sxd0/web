@@ -5,11 +5,13 @@
         @click="goHome"
         class="text-xl font-bold text-green-400 cursor-pointer"
       >
-        QueStudio
+        <router-link :to="{ path: '/', query: { refresh: Date.now() } }">QueStudio</router-link>
+
       </div>
       <div class="space-x-4 flex items-center">
-        <router-link to="/" class="hover:text-green-400">Главная</router-link>
+        <router-link :to="{ path: '/', query: { refresh: Date.now() } }">Главная</router-link>
         <router-link to="/create" class="hover:text-green-400">Создать</router-link>
+        <router-link to="/bookmarks" class="hover:text-green-400">⭐ Закладки</router-link>
 
         <template v-if="user">
           <router-link to="/profile" class="text-green-400 hover:underline text-sm">

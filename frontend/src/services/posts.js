@@ -8,10 +8,15 @@ export async function fetchTopPosts({ sort = 'new', tag = null, limit = 10, offs
 }
 
 export async function searchPosts(query) {
-  const response = await api.get('/posts', {
-    params: { search: query }
-  })
-  return response.data
+  try {
+    const response = await api.get('/posts/search', {
+      params: { query }
+    })
+    return response.data
+  } catch (err) {
+    console.error('Ошибка при поиске:', err)
+    return []
+  }
 }
 
 export async function fetchPostById(id) {

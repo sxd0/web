@@ -9,6 +9,9 @@ from app.tags.models import Tag
 from app.users.dependencies import get_current_user
 from app.users.models import User
 from app.database import async_session_maker
+from app.question_tags.dao import QuestionTagsDAO
+from app.votes.dao import VotesDAO
+from app.bookmarks.dao import BookmarksDAO
 
 router = APIRouter(prefix="/posts", tags=["Посты"])
 
@@ -39,6 +42,10 @@ async def get_all_posts(
         result = await session.execute(query)
         return result.scalars().all()
 
+@router.get("/search", response_model=list[PostRead])
+async def search_posts(query: str):
+    results = await PostsDAO().search_by_text(query)
+    return [r for r in results if r.post_type == PostType.question]
 
 
 
@@ -110,9 +117,7 @@ async def get_posts_with_tags():
 
 
 @router.get("/{post_id}/detailed", response_model=PostReadDetailed)
-async def get_post_detailed(post_id: int):
-    from app.question_tags.dao import QuestionTagsDAO
-    from app.votes.dao import VotesDAO
+async def get_post_detailed(post_id: int, user: User = Depends(get_current_user)):
 
     post = await PostsDAO().find_one_or_none(id=post_id)
     if not post:
@@ -120,12 +125,16 @@ async def get_post_detailed(post_id: int):
 
     tag_names = [tag.name for tag in post.tags]
     votes = await VotesDAO().find_all(post_id=post.id)
+    
+    bookmark = await BookmarksDAO().find_one_or_none(user_id=user.id, post_id=post.id)
 
     return {
         **post.__dict__,
         "tags": tag_names,
         "votes": len(votes),
+        "is_bookmarked": bool(bookmark),
     }
+
 
 
 
@@ -139,10 +148,7 @@ async def get_my_answers(user: User = Depends(get_current_user)):
     return await PostsDAO().find_all(author_id=user.id, post_type=PostType.answer)
 
 
-@router.get("/search", response_model=list[PostRead])
-async def search_posts(query: str):
-    results = await PostsDAO().search_by_text(query)
-    return [r for r in results if r.post_type == PostType.question]
+
 
 
 
