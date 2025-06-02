@@ -12,8 +12,8 @@
     <textarea name="body" class="form-control"></textarea>
   </div>
   <div class="mb-2">
-    <label>ID автора:</label>
-    <input type="number" name="author_id" class="form-control">
+    <label for="author_id">ID автора:</label>
+    <input type="number" name="author_id" class="form-control" required>
   </div>
   <div class="form-check">
     <input type="checkbox" name="is_closed" class="form-check-input">
@@ -31,5 +31,11 @@
     </select>
   </div>
   <button class="btn btn-success">Создать</button>
-</form>
+  <label for="tags">Теги:</label>
+  <select name="tag_ids" multiple class="form-select">
+      {% for tag in tags %}
+      <option value="{{ tag.id }}">{{ tag.name }}</option>
+      {% endfor %}
+  </select>
+  </form>
 {% endblock %}

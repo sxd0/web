@@ -14,3 +14,6 @@ class Bookmark(Base):
 
     user = relationship("User", backref="bookmarks")
     post = relationship("Post", backref="bookmarks")
+
+    def __str__(self):
+        return f"{self.user_id} → {self.post_id}"

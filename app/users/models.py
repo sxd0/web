@@ -23,4 +23,5 @@ class User(Base):
     subscriptions = relationship('Subscription', back_populates="user", foreign_keys="Subscription.user_id")
     target_subscriptions = relationship('Subscription', back_populates="target_user", foreign_keys="Subscription.targetuser_id")
 
-
+    def __str__(self):
+        return self.username

@@ -5,7 +5,7 @@
 <form method="post">
   <div class="mb-2">
     <label>ID:</label>
-    <input type="text" class="form-control" value="{{ post.id }}" readonly>
+    <input type="text" name="id" value="{{ post.id }}" readonly class="form-control">
   </div>
   <div class="mb-2">
     <label>Заголовок:</label>
@@ -36,7 +36,7 @@
   </div>
   <div class="mb-2">
     <label>Дата создания:</label>
-    <input type="text" class="form-control" value="{{ post.created_at }}" readonly>
+    <input type="text" name="created_at" value="{{ post.created_at }}" readonly class="form-control">
   </div>
   <button class="btn btn-primary">Сохранить</button>
   <h4 class="mt-4">Голоса за пост</h4>

@@ -56,6 +56,7 @@
             <td>{{ post.views }}</td>
             <td><a href="/admin/posts/{{ post.id }}/edit">Подробнее</a></td>
             <td>
+              <a href="/admin/posts/{{ post.id }}/edit">Редактировать</a>
               <a href="/admin/posts/{{ post.id }}/edit">✏</a>
               <a href="/admin/posts/{{ post.id }}/delete" onclick="return confirm('Удалить пост?')">🗑</a>
             </td>

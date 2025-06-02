@@ -1,6 +1,6 @@
 from pydantic import ConfigDict, model_validator
 from pydantic_settings import BaseSettings
-
+from typing import ClassVar
 
 class Settings(BaseSettings):
 
@@ -16,6 +16,8 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str
     ALGORITHM: str
+
+    LANGUAGE_CODE: ClassVar[str] = 'ru' # Возможно все сломает!
 
     model_config = ConfigDict(env_file=".env")
 

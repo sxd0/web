@@ -147,11 +147,8 @@ async def get_my_questions(user: User = Depends(get_current_user)):
 async def get_my_answers(user: User = Depends(get_current_user)):
     return await PostsDAO().find_all(author_id=user.id, post_type=PostType.answer)
 
-
-
-
-
-
 @router.get("/{post_id}/answers", response_model=list[PostRead])
 async def get_answers(post_id: int):
     return await PostsDAO().find_all(parent_id=post_id, post_type=PostType.answer)
+
+
